@@ -57,7 +57,7 @@ export function TaskForm({
           {isPending
             ? "Salvando..."
             : isEditing
-              ? "Salvar alteracoes"
+              ? "Salvar alterações"
               : "Criar tarefa"}
         </button>
         {isEditing && onCancel ? (

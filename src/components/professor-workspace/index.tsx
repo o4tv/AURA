@@ -28,10 +28,15 @@ export function ProfessorWorkspace({ tasks }: ProfessorWorkspaceProps) {
       setSelectedTask(null);
       setFormVersion((current) => current + 1);
     }
-  }, [state.status]);
+  }, [state.status, state.message]);
 
   function startEditing(task: Task) {
     setSelectedTask(task);
+    setFormVersion((current) => current + 1);
+  }
+
+  function cancelEditing() {
+    setSelectedTask(null);
     setFormVersion((current) => current + 1);
   }
 
@@ -48,7 +53,7 @@ export function ProfessorWorkspace({ tasks }: ProfessorWorkspaceProps) {
           <button
             className="secondary"
             type="button"
-            onClick={() => setSelectedTask(null)}
+            onClick={cancelEditing}
           >
             Cancelar edição
           </button>
@@ -60,7 +65,7 @@ export function ProfessorWorkspace({ tasks }: ProfessorWorkspaceProps) {
         task={selectedTask ?? undefined}
         formAction={formAction}
         isPending={isPending}
-        onCancel={selectedTask ? () => setSelectedTask(null) : undefined}
+        onCancel={selectedTask ? cancelEditing : undefined}
       />
 
       {state.status !== "idle" && state.message ? (
