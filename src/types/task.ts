@@ -5,3 +5,8 @@ export type Task = {
   dueDate: string;
   createdAt: string;
 };
+
+export type User = {
+  student: boolean;
+  auth: object;
+}
