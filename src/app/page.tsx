@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { listTasks } from "@/lib/tasks";
-import { ProfessorWorkspace } from "@/components/professor-workspace";
+import { getCurrentUser } from "@/lib/session";
 
-export default async function Professor() {
-  const user = await auth();
+export default async function Home() {
+  const user = await getCurrentUser();
+
   if (!user) {
     redirect("/login");
   }
-  // redirect(`/${user.type}`)
+
+  redirect(user.role === "teacher" ? "/professor" : "/estudante");
 }

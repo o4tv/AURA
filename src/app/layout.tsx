@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { auth } from "@/auth";
+import { AppSessionProvider } from "@/components/session-provider";
 import { Topbar } from "@/components/top-bar";
 
 export const metadata: Metadata = {
@@ -14,16 +15,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const teacher = await auth();
+  const session = await auth();
 
   return (
     <html lang="pt-BR">
       <body>
-        <div className="shell">
-          <Topbar isLogged={!!teacher} />
+        <AppSessionProvider session={session}>
+          <div className="shell">
+            <Topbar />
 
-          {children}
-        </div>
+            {children}
+          </div>
+        </AppSessionProvider>
       </body>
     </html>
   );

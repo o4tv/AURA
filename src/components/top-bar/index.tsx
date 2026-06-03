@@ -1,22 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
-type TopbarProps = {
-  isLogged?: boolean;
-};
-
-export function Topbar({ isLogged }: TopbarProps) {
-  const pathname = usePathname();
-  const onProfessorPanel = pathname.startsWith("/professor");
-  const href = onProfessorPanel ? "/" : isLogged ? "/professor" : "/login";
-  const label = onProfessorPanel
-    ? "Painel do aluno"
-    : isLogged
-      ? "Painel do professor"
-      : "Entrar como professor";
+export function Topbar() {
+  const { data: session } = useSession();
+  const isTeacher = session?.user?.role === "teacher";
+  const isStudent = session?.user?.role === "student";
+  const isAuthenticated = Boolean(session?.user?.email);
+  const href = isTeacher ? "/professor" : isStudent ? "/estudante" : "/login";
+  const label = isTeacher ? "Turmas" : isStudent ? "Minha turma" : "Entrar";
 
   async function handleLogout() {
     await signOut({ callbackUrl: "/" });
@@ -32,7 +25,7 @@ export function Topbar({ isLogged }: TopbarProps) {
         <Link className="ghost-button" href={href}>
           {label}
         </Link>
-        {isLogged ? (
+        {isAuthenticated ? (
           <button className="ghost-button" type="button" onClick={handleLogout}>
             Sair
           </button>

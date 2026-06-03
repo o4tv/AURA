@@ -1,15 +1,45 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { listTasks } from "@/lib/tasks";
-import { ProfessorWorkspace } from "@/components/professor-workspace";
+import { getCurrentUser } from "@/lib/session";
+import { listClasses } from "@/lib/tasks";
+import styles from "./page.module.css";
 
 export default async function Professor() {
-  const teacher = await auth();
-  if (!teacher) {
+  const user = await getCurrentUser();
+  if (!user) {
     redirect("/login");
   }
 
-  const tasks = listTasks();
+  if (user.role === "student") {
+    redirect("/estudante");
+  }
 
-  return <ProfessorWorkspace tasks={tasks} />;
+  const classes = listClasses();
+
+  return (
+    <main className={styles.page}>
+      <div className={styles.titleGroup}>
+        <h2 className={styles.title}>Turmas</h2>
+        <span className="muted">
+          Clique em uma turma para editar suas tarefas.
+        </span>
+      </div>
+
+      <div className={styles.classGrid}>
+        {classes.map((schoolClass) => (
+          <Link
+            key={schoolClass.id}
+            className={styles.classCard}
+            href={`/professor/${schoolClass.id}`}
+          >
+            <strong>{schoolClass.name}</strong>
+            <div className={styles.classCardMeta}>
+              <span>{schoolClass.tasks.length} tarefas</span>
+              <span>Editar turma</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </main>
+  );
 }

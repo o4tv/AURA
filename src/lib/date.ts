@@ -1,3 +1,14 @@
+const TIME_ZONE = "America/Fortaleza";
+
+export function getCurrentDateKey() {
+  return new Intl.DateTimeFormat("sv-SE", {
+    timeZone: TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
 export function getTodayStart() {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -57,6 +68,15 @@ export function formatDateShort(value: string) {
     month: "2-digit",
     year: "numeric",
   }).format(new Date(value));
+}
+
+export function formatDateOnly(value: string) {
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) {
+    return value;
+  }
+
+  return `${day}/${month}/${year}`;
 }
 
 export function isDueToday(dueDate: string) {

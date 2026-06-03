@@ -2,6 +2,7 @@ import { formatDateTimeLocal } from "@/lib/date";
 import type { Task } from "@/types/task";
 
 type TaskFormProps = {
+  classId: string;
   task?: Task;
   formAction: (formData: FormData) => void;
   isPending?: boolean;
@@ -9,6 +10,7 @@ type TaskFormProps = {
 };
 
 export function TaskForm({
+  classId,
   task,
   formAction,
   isPending = false,
@@ -20,6 +22,7 @@ export function TaskForm({
   return (
     <form className="task-form" action={formAction}>
       <input type="hidden" name="mode" value="save" />
+      <input type="hidden" name="classId" value={classId} />
       {taskId ? <input type="hidden" name="id" value={taskId} /> : null}
 
       <label className="task-form-fields">

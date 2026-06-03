@@ -2,15 +2,21 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createTask, deleteTask, updateTask } from "@/lib/tasks";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/session";
+import {
+  addClassNotice,
+  createTask,
+  deleteClassNotice,
+  deleteTask,
+  updateTask,
+} from "@/lib/tasks";
 
 async function requireTeacher() {
-  const teacher = await auth();
-  if (!teacher) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "teacher") {
     redirect("/login");
   }
-  return teacher;
+  return user;
 }
 
 function readTaskFormData(formData: FormData) {
@@ -36,6 +42,56 @@ export async function taskMutationAction(
   const mode = String(formData.get("mode") ?? "save").trim();
 
   try {
+    const classId = String(formData.get("classId") ?? "").trim();
+    if (!classId) {
+      return {
+        status: "error",
+        message: "Selecione uma turma valida.",
+      };
+    }
+
+    if (mode === "notice-create") {
+      const message = String(formData.get("message") ?? "").trim();
+      const expiresOn = String(formData.get("expiresOn") ?? "").trim();
+      if (!message) {
+        return {
+          status: "error",
+          message: "Escreva um aviso antes de publicar.",
+        };
+      }
+
+      if (!expiresOn) {
+        return {
+          status: "error",
+          message: "Escolha uma data para o aviso desaparecer.",
+        };
+      }
+
+      addClassNotice(classId, message, expiresOn);
+      revalidatePath("/");
+      revalidatePath("/estudante");
+      revalidatePath("/professor");
+      revalidatePath(`/professor/${classId}`);
+      return { status: "success", message: "Aviso publicado." };
+    }
+
+    if (mode === "notice-delete") {
+      const noticeId = String(formData.get("noticeId") ?? "").trim();
+      if (!noticeId) {
+        return {
+          status: "error",
+          message: "Selecione um aviso valido para remover.",
+        };
+      }
+
+      deleteClassNotice(classId, noticeId);
+      revalidatePath("/");
+      revalidatePath("/estudante");
+      revalidatePath("/professor");
+      revalidatePath(`/professor/${classId}`);
+      return { status: "success", message: "Aviso removido." };
+    }
+
     if (mode === "delete") {
       const id = String(formData.get("id") ?? "").trim();
       if (!id) {
@@ -45,9 +101,11 @@ export async function taskMutationAction(
         };
       }
 
-      deleteTask(id);
+      deleteTask(classId, id);
       revalidatePath("/");
+      revalidatePath("/estudante");
       revalidatePath("/professor");
+      revalidatePath(`/professor/${classId}`);
       return { status: "success", message: "Tarefa removida." };
     }
 
@@ -61,15 +119,19 @@ export async function taskMutationAction(
 
     const id = String(formData.get("id") ?? "").trim();
     if (id) {
-      updateTask(id, input);
+      updateTask(classId, id, input);
       revalidatePath("/");
+      revalidatePath("/estudante");
       revalidatePath("/professor");
+      revalidatePath(`/professor/${classId}`);
       return { status: "success", message: "Tarefa atualizada." };
     }
 
-    createTask(input);
+    createTask(classId, input);
     revalidatePath("/");
+    revalidatePath("/estudante");
     revalidatePath("/professor");
+    revalidatePath(`/professor/${classId}`);
     return { status: "success", message: "Tarefa criada." };
   } catch (error) {
     return { status: "error", message: getErrorMessage(error) };

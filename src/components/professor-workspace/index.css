@@ -79,6 +79,26 @@
   background: color-mix(in srgb, var(--surface) 88%, transparent);
 }
 
+.professor-workspace-notice-row {
+  border-color: color-mix(in srgb, var(--attention) 26%, var(--border));
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--attention) 10%, var(--surface)),
+      color-mix(in srgb, var(--surface) 88%, transparent)
+    );
+}
+
+.professor-workspace-notice-tag {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+  background: color-mix(in srgb, var(--attention) 18%, transparent);
+  color: var(--attention);
+}
+
 .professor-workspace-main {
   display: grid;
   gap: 0.5rem;
@@ -97,6 +117,16 @@
   margin: 0;
   display: grid;
   gap: 0.25rem;
+}
+
+.professor-workspace-notice-expiry {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.82rem;
+  background: color-mix(in srgb, var(--attention) 14%, transparent);
+  color: var(--attention);
 }
 
 .professor-workspace-actions {

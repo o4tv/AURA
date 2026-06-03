@@ -1,23 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Task } from "@/types/task";
-import { COMPLETED_TASKS_KEY } from "@/lib/constants";
-import { TaskCard } from "../task-card";
+import { getCompletedTasksKey } from "@/lib/constants";
 import { isDueToday, isOverdue, isWithinDays } from "@/lib/date";
+import type { Task } from "@/types/task";
+import { TaskCard } from "../task-card";
 
 type TaskBoardProps = {
   tasks: Task[];
+  classId: string;
 };
 
-export function TaskBoard({ tasks }: TaskBoardProps) {
+export function TaskBoard({ tasks, classId }: TaskBoardProps) {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [deadline, setDeadline] = useState("all");
   const [completedIds, setCompletedIds] = useState<string[]>([]);
+  const completedTasksKey = getCompletedTasksKey(classId);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(COMPLETED_TASKS_KEY);
+    const stored = window.localStorage.getItem(completedTasksKey);
     if (!stored) {
       return;
     }
@@ -28,16 +30,13 @@ export function TaskBoard({ tasks }: TaskBoardProps) {
         setCompletedIds(parsed.filter((id) => typeof id === "string"));
       }
     } catch {
-      window.localStorage.removeItem(COMPLETED_TASKS_KEY);
+      window.localStorage.removeItem(completedTasksKey);
     }
-  }, []);
+  }, [completedTasksKey]);
 
   useEffect(() => {
-    window.localStorage.setItem(
-      COMPLETED_TASKS_KEY,
-      JSON.stringify(completedIds),
-    );
-  }, [completedIds]);
+    window.localStorage.setItem(completedTasksKey, JSON.stringify(completedIds));
+  }, [completedIds, completedTasksKey]);
 
   const filteredTasks = tasks.filter((task) => {
     const haystack = `${task.title} ${task.description}`.toLowerCase();

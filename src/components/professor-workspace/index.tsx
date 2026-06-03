@@ -2,8 +2,9 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { taskMutationAction } from "@/actions/tasks";
+import type { SchoolClass } from "@/types/school-class";
 import type { Task } from "@/types/task";
-import { formatDateShort, getDeadlineMeta } from "@/lib/date";
+import { formatDateOnly, formatDateShort, getCurrentDateKey, getDeadlineMeta } from "@/lib/date";
 import { TaskForm } from "../task-form";
 
 const initialTaskMutationState = {
@@ -12,12 +13,15 @@ const initialTaskMutationState = {
 } as const;
 
 type ProfessorWorkspaceProps = {
+  schoolClass: SchoolClass;
   tasks: Task[];
 };
 
-export function ProfessorWorkspace({ tasks }: ProfessorWorkspaceProps) {
+export function ProfessorWorkspace({ schoolClass, tasks }: ProfessorWorkspaceProps) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [formVersion, setFormVersion] = useState(0);
+  const [noticeText, setNoticeText] = useState("");
+  const [noticeExpiry, setNoticeExpiry] = useState("");
   const [state, formAction, isPending] = useActionState(
     taskMutationAction,
     initialTaskMutationState,
@@ -27,6 +31,8 @@ export function ProfessorWorkspace({ tasks }: ProfessorWorkspaceProps) {
     if (state.status === "success") {
       setSelectedTask(null);
       setFormVersion((current) => current + 1);
+      setNoticeText("");
+      setNoticeExpiry("");
     }
   }, [state.status, state.message]);
 
@@ -40,28 +46,115 @@ export function ProfessorWorkspace({ tasks }: ProfessorWorkspaceProps) {
     setFormVersion((current) => current + 1);
   }
 
+  function clearNotice() {
+    setNoticeText("");
+    setNoticeExpiry("");
+  }
+
   return (
     <section className="professor-workspace">
       <div className="professor-workspace-section-title">
         <div className="professor-workspace-title-group">
-          <h2 className="professor-workspace-title">Painel do Professor</h2>
+          <h2 className="professor-workspace-title">{schoolClass.name}</h2>
           <span className="muted">
-            Crie, altere ou exclua uma tarefa sem sair desta pagina.
+            Crie, altere ou exclua uma tarefa desta turma.
           </span>
         </div>
         {selectedTask ? (
-          <button
-            className="secondary"
-            type="button"
-            onClick={cancelEditing}
-          >
+          <button className="secondary" type="button" onClick={cancelEditing}>
             Cancelar edição
           </button>
         ) : null}
       </div>
 
+      <form className="task-form" action={formAction}>
+        <input type="hidden" name="mode" value="notice-create" />
+        <input type="hidden" name="classId" value={schoolClass.id} />
+
+        <label className="task-form-fields">
+          <span>Novo aviso</span>
+          <textarea
+            name="message"
+            rows={4}
+            placeholder="Escreva um aviso para a turma..."
+            value={noticeText}
+            onChange={(event) => setNoticeText(event.target.value)}
+            required
+          />
+        </label>
+
+        <label className="task-form-fields">
+          <span>Data para desaparecer</span>
+          <input
+            type="date"
+            name="expiresOn"
+            min={getCurrentDateKey()}
+            value={noticeExpiry}
+            onChange={(event) => setNoticeExpiry(event.target.value)}
+            required
+          />
+        </label>
+
+        <div className="task-form-actions">
+          <button type="submit" disabled={isPending}>
+            {isPending ? "Publicando..." : "Publicar aviso"}
+          </button>
+          <button
+            className="secondary"
+            type="button"
+            onClick={clearNotice}
+            disabled={isPending || (noticeText.length === 0 && noticeExpiry.length === 0)}
+          >
+            Limpar
+          </button>
+        </div>
+      </form>
+
+        {schoolClass.notices.length > 0 ? (
+          <div className="professor-workspace-rows">
+            {schoolClass.notices.map((notice) => (
+            <article
+              key={notice.id}
+              className="professor-workspace-row professor-workspace-notice-row"
+            >
+              <div className="professor-workspace-main">
+                <div className="professor-workspace-row-title">
+                  <strong>Aviso da turma</strong>
+                  <span className="professor-workspace-notice-tag">
+                    Publicado
+                  </span>
+                </div>
+                <p className="professor-workspace-meta">
+                  <span>Publicado em {formatDateShort(notice.createdAt)}</span>
+                  <span className="professor-workspace-notice-expiry">
+                    Expira em {formatDateOnly(notice.expiresOn)}
+                  </span>
+                  <span className="muted">{notice.message}</span>
+                </p>
+              </div>
+
+              <div className="professor-workspace-actions">
+                <form action={formAction}>
+                  <input type="hidden" name="mode" value="notice-delete" />
+                  <input type="hidden" name="classId" value={schoolClass.id} />
+                  <input type="hidden" name="noticeId" value={notice.id} />
+                  <button
+                    className="secondary"
+                    type="submit"
+                    disabled={isPending}
+                  >
+                    Excluir
+                  </button>
+                </form>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
       <TaskForm
         key={formVersion}
+        classId={schoolClass.id}
         task={selectedTask ?? undefined}
         formAction={formAction}
         isPending={isPending}
@@ -129,6 +222,7 @@ export function ProfessorWorkspace({ tasks }: ProfessorWorkspaceProps) {
 
                 <form action={formAction}>
                   <input type="hidden" name="mode" value="delete" />
+                  <input type="hidden" name="classId" value={schoolClass.id} />
                   <input type="hidden" name="id" value={task.id} />
                   <button
                     className="secondary"

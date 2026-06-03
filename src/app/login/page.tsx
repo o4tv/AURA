@@ -1,20 +1,19 @@
 import { AuthForm } from "@/components/auth-form";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { getCurrentUser } from "@/lib/session";
 
 export default async function Login() {
-  const teacher = await auth();
+  const user = await getCurrentUser();
 
-  if (teacher) {
-    redirect("/professor");
+  if (user) {
+    redirect(user.role === "teacher" ? "/professor" : "/estudante");
   }
 
   return (
     <main>
-      <h1>Entrar como professor</h1>
+      <h1>Entrar no sistema</h1>
       <p>
-        Para acessar o painel de controle do professor, faça login com suas
-        credenciais.
+        Use seu e-mail e senha para acessar a turma ou o painel de edição.
       </p>
 
       <AuthForm />

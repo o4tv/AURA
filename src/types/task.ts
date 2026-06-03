@@ -6,7 +6,8 @@ export type Task = {
   createdAt: string;
 };
 
-export type User = {
-  student: boolean;
-  auth: object;
-}
+export type TaskFormInput = {
+  title: string;
+  description: string;
+  dueDate: string;
+};

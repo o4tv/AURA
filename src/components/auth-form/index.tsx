@@ -19,7 +19,7 @@ export function AuthForm() {
     const formData = new FormData(event.currentTarget);
     const response = await signIn("credentials", {
       redirect: false,
-      callbackUrl: "/professor",
+      callbackUrl: "/",
       email: String(formData.get("email") ?? ""),
       password: String(formData.get("password") ?? ""),
     });
@@ -31,7 +31,7 @@ export function AuthForm() {
       return;
     }
 
-    router.push(response.url ?? "/professor");
+    router.push(response.url ?? "/");
   }
 
   return (
@@ -56,8 +56,8 @@ export function AuthForm() {
       <button type="submit" disabled={loading}>
         {loading ? "Entrando..." : "Entrar"}
       </button>
-      <Link className="ghost-button" href="/">
-        Voltar ao painel do aluno
+      <Link className="ghost-button" href="/login">
+        Limpar
       </Link>
     </form>
   );
