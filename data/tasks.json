@@ -1,0 +1,23 @@
+[
+  {
+    "id": "646802e0-2715-4628-8171-28c485e08bcb",
+    "title": "Desenho de Geografia",
+    "description": "Fazer um desenho sobre uma cidade com problemas. problemas esses que nós devemos resolver.",
+    "dueDate": "2026-06-03T16:41:00.000Z",
+    "createdAt": "2026-06-02T11:41:50.008Z"
+  },
+  {
+    "id": "a5def66e-f3f2-4418-9ec5-063e34173d9d",
+    "title": "Atividade de Programaçao WEB I & II",
+    "description": "Trabalho estilo Shark Tank",
+    "dueDate": "2026-06-03T10:00:00.000Z",
+    "createdAt": "2026-06-02T11:17:22.926Z"
+  },
+  {
+    "id": "c2eca8ff-6830-4545-8691-69175c67d04b",
+    "title": "Tarefa de Ingles",
+    "description": "mandar um audio falando ingles pro email lucylannagames@gmail.com",
+    "dueDate": "2026-06-04T10:19:00.000Z",
+    "createdAt": "2026-05-31T06:19:21.896Z"
+  }
+]

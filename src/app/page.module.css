@@ -1,0 +1,14 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 2rem;
+}
+.titleGroup {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.title {
+  margin: 0;
+}

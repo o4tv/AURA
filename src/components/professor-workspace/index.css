@@ -1,0 +1,123 @@
+.professor-workspace {
+  display: grid;
+  gap: 1rem;
+}
+
+.professor-workspace-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.professor-workspace-title-group {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.professor-workspace-title {
+  margin: 0;
+}
+
+.professor-workspace-deadline-badge {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.professor-workspace-danger .professor-workspace-deadline-badge {
+  background: color-mix(in srgb, var(--danger) 16%, transparent);
+  color: var(--danger);
+}
+
+.professor-workspace-warning .professor-workspace-deadline-badge {
+  background: color-mix(in srgb, var(--warning) 20%, transparent);
+  color: var(--warning);
+}
+
+.professor-workspace-attention .professor-workspace-deadline-badge {
+  background: color-mix(in srgb, var(--attention) 20%, transparent);
+  color: var(--attention);
+}
+
+.professor-workspace-feedback {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.professor-workspace-feedback-success {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  background: color-mix(in srgb, var(--accent-soft) 50%, var(--surface));
+}
+
+.professor-workspace-feedback-error {
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+}
+
+.professor-workspace-rows {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.professor-workspace-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+
+.professor-workspace-main {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.professor-workspace-row-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.professor-workspace-meta {
+  margin: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.professor-workspace-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.professor-workspace-actions form {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .professor-workspace-row {
+    flex-direction: column;
+  }
+
+  .professor-workspace-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
